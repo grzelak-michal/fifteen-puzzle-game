@@ -1,10 +1,10 @@
 import numpy as np
 
 class Board(object):
-    def __init__(self, board):
+    def __init__(self, board, move_history=[]):
         self.board = board
         self.blank_position = self.find_blank()
-        self.move_history = []
+        self.move_history = move_history
     
     def __getitem__(self, key):
         return self.board[key]
@@ -13,22 +13,29 @@ class Board(object):
         if len(self.move_history) > 0:
             last_move = self.move_history[-1]
             self.move_history = self.move_history[:-1]
-
-            last_position = tuple(-x for x in Board.get_direction(last_move))
+            tuple_direction = tuple(-x for x in Board.get_direction(last_move))
+            last_position = tuple(map(sum, zip(tuple_direction, self.blank_position)))
 
             self._switch_position(last_position)
+    
+    def direction_to_position(self, direction):
+        tuple_direction = Board.get_direction(direction)
+        new_position = tuple(map(sum, zip(tuple_direction, self.blank_position)))
 
-
+        return new_position
 
     def move(self, direction):
         '''Direction is a char LDUR'''
-        tuple_direction = Board.get_direction(direction)
-        new_position = tuple(map(sum, zip(tuple_direction, self.blank_position)))
         
-        if self._is_move_possible(new_position):
-            self._switch_position(new_position)
+        new_position = self.direction_to_position(direction)
 
+        if self.is_move_possible(direction):
+            self._switch_position(new_position)
             self.move_history.append(direction)
+
+            return True
+        
+        return False
     
     def _switch_position(self, new_position):
         x1, y1 = new_position
@@ -43,7 +50,8 @@ class Board(object):
         
         return all(flat_array[i] <= flat_array[i + 1] for i in range(len(flat_array)-1))
 
-    def _is_move_possible(self, new_position):
+    def is_move_possible(self, direction):
+        new_position = self.direction_to_position(direction)
         width, height = self.board.shape
 
         if new_position[0] >= 0 and new_position[0] < width and new_position[1] >= 0 and new_position[1] < height:
@@ -87,12 +95,7 @@ class Board(object):
         inversions = self._inversionsCount()
         width, height = self.board.shape
 
-        if width % 2 == 1 and inversions % 2 == 1:
+        if (height % 2 == 1 and inversions % 2 == 0) or (height % 2 == 0 and ((self.blank_position[0] % 2 == 0) == (inversions % 2 == 1))) :
+            return True
+        else:
             return False
-        elif width % 2 == 0:
-            if height % 2 == 0 and ((inversions + self.blank_position[0]) % 2 != 0):
-                return False
-            elif height % 2 == 1 and ((inversions + self.blank_position[0]) % 2 != 1):
-                return False
-        
-        return True

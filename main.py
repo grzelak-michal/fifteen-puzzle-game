@@ -1,6 +1,7 @@
 import sys, getopt
 import numpy as np
 from board import Board
+import algorithms
 
 # TODO: implement checking for tile 0 and numbers in rows
 def readBoard():
@@ -18,9 +19,11 @@ def readBoard():
 
 
 # board = readBoard()
-board = Board(np.arange(16).reshape(4, 4))
-print(board.is_solved())
-board.move('L')
-print(board.is_solved())
-print(board.board)
-print(board.move_history)
+arr = np.arange(16)
+np.random.shuffle(arr)
+board = Board(arr.reshape(4, 4))
+if board.is_solvable():
+    print(board.board)
+    solved = algorithms.BFS(board, ['L', 'R', 'U', 'D'])
+    print(solved.board)
+
