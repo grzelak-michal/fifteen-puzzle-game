@@ -37,11 +37,14 @@ class Board(object):
         return False
     
     def _inversionsCount(self):
-        flat_array = self.board.reshape(np.prod(board.shape))
+        flat_array = self.board.reshape(np.prod(self.board.shape))
         inversions = 0
 
         for i in range(len(flat_array)):
             for j in range(i + 1, len(flat_array)):
+                if flat_array[i] == 0 or flat_array[j] == 0:
+                    continue
+                
                 if flat_array[i] > flat_array[j]:
                     inversions += 1
         
@@ -72,9 +75,9 @@ class Board(object):
         if width % 2 == 1 and inversions % 2 == 1:
             return False
         elif width % 2 == 0:
-            if height % 2 == 0 and (inversions + self.blank_position[1] % 2 != 0):
+            if height % 2 == 0 and ((inversions + self.blank_position[0]) % 2 != 0):
                 return False
-            elif height % 2 == 1 and (inversions + self.blank_position[1] % 2 != 1):
+            elif height % 2 == 1 and ((inversions + self.blank_position[0]) % 2 != 1):
                 return False
         
         return True
