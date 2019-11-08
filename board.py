@@ -8,6 +8,17 @@ class Board(object):
     
     def __getitem__(self, key):
         return self.board[key]
+    
+    def undo_move(self):
+        if len(self.move_history) > 0:
+            last_move = self.move_history[-1]
+            self.move_history = self.move_history[:-1]
+
+            last_position = tuple(-x for x in Board.get_direction(last_move))
+
+            self._switch_position(last_position)
+
+
 
     def move(self, direction):
         '''Direction is a char LDUR'''
@@ -15,12 +26,16 @@ class Board(object):
         new_position = tuple(map(sum, zip(tuple_direction, self.blank_position)))
         
         if self._is_move_possible(new_position):
-            x1, y1 = new_position
-            x2, y2 = self.blank_position
-            self.board[x1][y1], self.board[x2][y2] = self.board[x2][y2], self.board[x1][y1]
+            self._switch_position(new_position)
 
-            self.blank_position = new_position
             self.move_history.append(direction)
+    
+    def _switch_position(self, new_position):
+        x1, y1 = new_position
+        x2, y2 = self.blank_position
+        self.board[x1][y1], self.board[x2][y2] = self.board[x2][y2], self.board[x1][y1]
+
+        self.blank_position = new_position
     
     def is_solved(self):
         width, height = self.board.shape
