@@ -95,7 +95,12 @@ class Board(object):
         inversions = self._inversionsCount()
         width, height = self.board.shape
 
-        if (height % 2 == 1 and inversions % 2 == 0) or (height % 2 == 0 and ((self.blank_position[0] % 2 == 0) == (inversions % 2 == 1))) :
-            return True
-        else:
+        if width % 2 == 1 and inversions % 2 == 1:
             return False
+        elif width % 2 == 0:
+            if height % 2 == 0 and ((inversions + self.blank_position[0]) % 2 != 0):
+                return False
+            elif height % 2 == 1 and ((inversions + self.blank_position[0]) % 2 != 1):
+                return False
+        
+        return True
