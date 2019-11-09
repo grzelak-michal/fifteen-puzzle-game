@@ -20,7 +20,7 @@ def BFS(board, move_order, limit=0):
             return q_board
         
         for direction in move_order:
-            if board.is_move_possible(direction):
+            if q_board.is_move_possible(direction):
                 new_board = np.copy(q_board.board)
                 new_history = q_board.move_history[:]
 
