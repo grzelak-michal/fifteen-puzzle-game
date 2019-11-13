@@ -1,5 +1,6 @@
 from check import Assert, AssertTrue, AssertFalse
 from board import Board
+import heuristics
 import numpy as np
 
 
@@ -87,3 +88,13 @@ AssertTrue(board.is_move_possible('L'))
 AssertTrue(board.is_move_possible('U'))
 AssertTrue(board.is_move_possible('R'))
 AssertTrue(board.is_move_possible('D'))
+
+board = Board(np.arange(16).reshape(4, 4))
+board.move('L')
+Assert(heuristics.h3(board)).equals(2)
+board.move('U')
+Assert(heuristics.h3(board)).equals(4)
+board.move('R')
+Assert(heuristics.h3(board)).equals(4)
+
+print("Tests run successfully!")
