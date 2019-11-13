@@ -1,6 +1,7 @@
 import queue
 from board import Board
 import numpy as np 
+from sortedcontainers import SortedKeyList
 
 def array_to_string(arr):
     shape = arr.shape
@@ -73,4 +74,74 @@ def IDDFS(board, move_order, limit=10):
 
         if result != None:
             return result
+
+def best_first_search(board, move_order, heuristic):
+    board_list = SortedKeyList(key=heuristic)
+
+    board_list.add(board)
+    visited = dict()
+
+    while len(board_list) > 0:
+        considered_board = board_list.pop(0)
+        # print("Distance: {}".format(heuristic(considered_board)))
+        key = array_to_string(considered_board.board)
+
+        # if len(considered_board.move_history) > limit:
+        #     continue
+
+        visited[key] = True
+
+        if considered_board.is_solved():
+            return considered_board
+        
+        for direction in move_order:
+            if considered_board.is_move_possible(direction):
+                new_board = np.copy(considered_board.board)
+                new_history = considered_board.move_history[:]
+
+                new_board = Board(new_board, new_history)
+                new_board.move(direction)
+                new_key = array_to_string(new_board.board)
+                
+                if visited.get(new_key, False) == False:
+                    board_list.add(new_board)
+    
+    return None
+
+def A_star(board, move_order, heuristic):
+    def smart_heuristic(board):
+        value = len(board.move_history) / 100 + heuristic(board)
+        return value
+
+    board_list = SortedKeyList(key=smart_heuristic)
+
+    board_list.add(board)
+    visited = dict()
+
+    while len(board_list) > 0:
+        considered_board = board_list.pop(0)
+        # print("Distance: {}".format(heuristic(considered_board)))
+        key = array_to_string(considered_board.board)
+
+        # if len(considered_board.move_history) > limit:
+        #     continue
+
+        visited[key] = True
+
+        if considered_board.is_solved():
+            return considered_board
+        
+        for direction in move_order:
+            if considered_board.is_move_possible(direction):
+                new_board = np.copy(considered_board.board)
+                new_history = considered_board.move_history[:]
+
+                new_board = Board(new_board, new_history)
+                new_board.move(direction)
+                new_key = array_to_string(new_board.board)
+                
+                if visited.get(new_key, False) == False:
+                    board_list.add(new_board)
+    
+    return None
 
