@@ -106,3 +106,28 @@ class Board(object):
                 return False
         
         return True
+
+class MoveOrder(object):
+    def __init__(self, move_order: Sequence[str]):
+        self.is_random = False
+        self.move_order = move_order
+        self.index = -1
+
+        if move_order[0] == 'R':
+            self.is_random = True
+    
+    def __iter__(self) -> Iterable[str]:
+        self.index = -1
+
+        if self.is_random == True:
+            random.shuffle(self.move_order)
+
+        return self
+    
+    def __next__(self) -> str:
+        try:
+            self.index += 1
+            return self.move_order[self.index]
+        except IndexError:
+            raise StopIteration
+
