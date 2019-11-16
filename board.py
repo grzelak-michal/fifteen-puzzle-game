@@ -1,6 +1,7 @@
 import numpy as np
 from typing import Sequence, Tuple, Iterable
 import random
+import copy
 
 class Board(object):
     def __init__(self, board: Sequence[Sequence[int]], move_history: Sequence[str] = []):
@@ -11,10 +12,12 @@ class Board(object):
     def __getitem__(self, key: int) -> Sequence[int]:
         return self.board[key]
     
-    def undo_move(self) -> None:
+    def undo_move(self, remove=True) -> None:
         if len(self.move_history) > 0:
             last_move = self.move_history[-1]
-            self.move_history = self.move_history[:-1]
+            if remove == True:
+                self.move_history = self.move_history[:-1]
+                
             tuple_direction = tuple(-x for x in Board.get_direction(last_move))
             last_position = tuple(map(sum, zip(tuple_direction, self.blank_position)))
 
@@ -26,14 +29,16 @@ class Board(object):
 
         return new_position
 
-    def move(self, direction: str) -> bool:
+    def move(self, direction: str, append=True) -> bool:
         '''Direction is a char LDUR'''
-        
+        self.blank_position = self.find_blank()
         new_position = self.direction_to_position(direction)
 
         if self.is_move_possible(direction):
             self._switch_position(new_position)
-            self.move_history.append(direction)
+            
+            if append == True:
+                self.move_history.append(direction)
 
             return True
         
