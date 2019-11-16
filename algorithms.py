@@ -1,5 +1,5 @@
 import queue
-from typing import Iterable, Union, Optional
+from typing import Sequence, Union, Optional
 from board import Board
 import numpy as np 
 from sortedcontainers import SortedKeyList
@@ -8,7 +8,7 @@ def array_to_string(arr):
     shape = arr.shape
     return ','.join(map(str, arr.reshape(shape[0] * shape[1])))
 
-def BFS(board: Board, move_order: Iterable[str], limit=10) -> Optional[Board]:
+def BFS(board: Board, move_order: Sequence[str], limit=10) -> Optional[Board]:
     q = queue.Queue()
     q.put(board)
     visited = dict()
@@ -38,7 +38,7 @@ def BFS(board: Board, move_order: Iterable[str], limit=10) -> Optional[Board]:
 
     return None
 
-def DFS(board: Board, move_order: Iterable[str], limit=10) -> Optional[Board]:
+def DFS(board: Board, move_order: Sequence[str], limit=10) -> Optional[Board]:
     stack = list()
     stack.append(board)
     visited = dict()
@@ -69,14 +69,14 @@ def DFS(board: Board, move_order: Iterable[str], limit=10) -> Optional[Board]:
     
     return None
 
-def IDDFS(board: Board, move_order: Iterable[str], limit=10) -> Optional[Board]:
+def IDDFS(board: Board, move_order: Sequence[str], limit=10) -> Optional[Board]:
     for i in range(limit):
         result = DFS(board, move_order, i + 1)
 
         if result != None:
             return result
 
-def best_first_search(board: Board, move_order: Iterable[str], heuristic: callable) -> Optional[Board]:
+def best_first_search(board: Board, move_order: Sequence[str], heuristic: callable) -> Optional[Board]:
     board_list = SortedKeyList(key=heuristic)
 
     board_list.add(board)
@@ -109,7 +109,7 @@ def best_first_search(board: Board, move_order: Iterable[str], heuristic: callab
     
     return None
 
-def A_star(board: Board, move_order: Iterable[str], heuristic: callable) -> Optional[Board]:
+def A_star(board: Board, move_order: Sequence[str], heuristic: callable) -> Optional[Board]:
     def smart_heuristic(board):
         value = len(board.move_history) / 100 + heuristic(board)
         return value
