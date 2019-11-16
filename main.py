@@ -58,6 +58,6 @@ if board.is_solvable():
 
     print(solved.board)
 
-    game = Game(solved, board.initial_board)
+    game = Game(solved, board.board)
     game.show()
 
