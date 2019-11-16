@@ -43,7 +43,6 @@ board.move('D')
 board.move('L')
 board.move('L')
 board.move_history = []
-board.initial_board = deepcopy(board.board)
 
 if board.is_solvable():
     print(board.board)
