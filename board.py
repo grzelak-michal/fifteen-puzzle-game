@@ -1,15 +1,17 @@
 import numpy as np
+from typing import Sequence, Tuple, Iterable
+import random
 
 class Board(object):
-    def __init__(self, board, move_history=[]):
+    def __init__(self, board: Sequence[Sequence[int]], move_history: Sequence[str] = []):
         self.board = board
         self.blank_position = self.find_blank()
         self.move_history = move_history
     
-    def __getitem__(self, key):
+    def __getitem__(self, key: int) -> Sequence[int]:
         return self.board[key]
     
-    def undo_move(self):
+    def undo_move(self) -> None:
         if len(self.move_history) > 0:
             last_move = self.move_history[-1]
             self.move_history = self.move_history[:-1]
@@ -18,13 +20,13 @@ class Board(object):
 
             self._switch_position(last_position)
     
-    def direction_to_position(self, direction):
+    def direction_to_position(self, direction: str) -> Tuple[int, int]:
         tuple_direction = Board.get_direction(direction)
         new_position = tuple(map(sum, zip(tuple_direction, self.blank_position)))
 
         return new_position
 
-    def move(self, direction):
+    def move(self, direction: str) -> bool:
         '''Direction is a char LDUR'''
         
         new_position = self.direction_to_position(direction)
@@ -37,20 +39,20 @@ class Board(object):
         
         return False
     
-    def _switch_position(self, new_position):
+    def _switch_position(self, new_position: Tuple[int, int]) -> None:
         x1, y1 = new_position
         x2, y2 = self.blank_position
         self.board[x1][y1], self.board[x2][y2] = self.board[x2][y2], self.board[x1][y1]
 
         self.blank_position = new_position
     
-    def is_solved(self):
+    def is_solved(self) -> bool:
         width, height = self.board.shape
         flat_array = self.board.reshape(width * height)
         
         return all(flat_array[i] <= flat_array[i + 1] for i in range(len(flat_array)-1))
 
-    def is_move_possible(self, direction):
+    def is_move_possible(self, direction) -> bool:
         new_position = self.direction_to_position(direction)
         width, height = self.board.shape
 
@@ -59,7 +61,7 @@ class Board(object):
         
         return False
     
-    def _inversionsCount(self):
+    def _inversionsCount(self) -> int:
         flat_array = self.board.reshape(np.prod(self.board.shape))
         inversions = 0
 
@@ -73,7 +75,7 @@ class Board(object):
         
         return inversions
 
-    def find_blank(self):
+    def find_blank(self) -> Tuple[int, int]:
         width, height = self.board.shape
         for x in range(width):
             for y in range(height):
@@ -81,7 +83,7 @@ class Board(object):
                     return (x, y)
 
     @staticmethod  
-    def get_direction(dirLetter):
+    def get_direction(dirLetter) -> Tuple[int, int]:
         if dirLetter == 'L':
             return (0, 1)
         elif dirLetter == 'R':
@@ -91,7 +93,7 @@ class Board(object):
         elif dirLetter == 'D':
             return (-1, 0)
 
-    def is_solvable(self):
+    def is_solvable(self) -> bool:
         inversions = self._inversionsCount()
         width, height = self.board.shape
 
