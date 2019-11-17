@@ -76,7 +76,9 @@ def IDDFS(board: Board, move_order: MoveOrder, limit=10) -> Optional[Board]:
         if result != None:
             return result
 
-def best_first_search(board: Board, move_order: MoveOrder, heuristic: callable) -> Optional[Board]:
+DEFAULT_MOVE_ORDER = MoveOrder(['U', 'L', 'D', 'R'])
+
+def best_first_search(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER) -> Optional[Board]:
     board_list = SortedKeyList(key=heuristic)
 
     board_list.add(board)
@@ -94,7 +96,7 @@ def best_first_search(board: Board, move_order: MoveOrder, heuristic: callable) 
 
         if considered_board.is_solved():
             return considered_board
-        
+
         for direction in move_order:
             if considered_board.is_move_possible(direction):
                 new_board = np.copy(considered_board.board)
@@ -103,13 +105,13 @@ def best_first_search(board: Board, move_order: MoveOrder, heuristic: callable) 
                 new_board = Board(new_board, new_history)
                 new_board.move(direction)
                 new_key = array_to_string(new_board.board)
-                
+
                 if visited.get(new_key, False) == False:
                     board_list.add(new_board)
-    
+
     return None
 
-def A_star(board: Board, move_order: MoveOrder, heuristic: callable) -> Optional[Board]:
+def A_star(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER) -> Optional[Board]:
     def smart_heuristic(board):
         value = len(board.move_history) / 100 + heuristic(board)
         return value
@@ -131,7 +133,7 @@ def A_star(board: Board, move_order: MoveOrder, heuristic: callable) -> Optional
 
         if considered_board.is_solved():
             return considered_board
-        
+
         for direction in move_order:
             if considered_board.is_move_possible(direction):
                 new_board = np.copy(considered_board.board)
@@ -140,9 +142,11 @@ def A_star(board: Board, move_order: MoveOrder, heuristic: callable) -> Optional
                 new_board = Board(new_board, new_history)
                 new_board.move(direction)
                 new_key = array_to_string(new_board.board)
-                
+
                 if visited.get(new_key, False) == False:
                     board_list.add(new_board)
-    
+
     return None
 
+def SMA_star(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER) -> Optional[Board]:
+    return None
