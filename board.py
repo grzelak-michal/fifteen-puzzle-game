@@ -17,7 +17,7 @@ class Board(object):
             last_move = self.move_history[-1]
             if remove == True:
                 self.move_history = self.move_history[:-1]
-                
+
             tuple_direction = tuple(-x for x in Board.get_direction(last_move))
             last_position = tuple(map(sum, zip(tuple_direction, self.blank_position)))
 
@@ -120,6 +120,9 @@ class MoveOrder(object):
 
         if move_order[0] == 'R':
             self.is_random = True
+    
+    def __len__(self) -> int:
+        return len(self.move_order)
     
     def __iter__(self) -> Iterable[str]:
         self.index = -1
