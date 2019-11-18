@@ -25,7 +25,7 @@ def readBoard():
 
     temp = board.reshape(size)
     temp = np.sort(temp)
-    print(temp)
+    
     for i in range(size):
         if temp[i] != i:
             return None
@@ -144,13 +144,13 @@ def orderFactory(text):
 
 def heuristicFactory(text):
     if text == "h0":
-        return algorithms.h0
+        return heuristics.h0
     elif text == "h1":
-        return algorithms.h1
+        return heuristics.h1
     elif text == "h2":
-        return algorithms.h2
+        return heuristics.h2
     elif text == "h3":
-        return algorithms.h3
+        return heuristics.h3
     else:
         return None
 
