@@ -222,7 +222,7 @@ def SMA_star(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER, l
         if successor != None:
                 successor_score = max((board_score, smart_heuristic(successor)))
         else:
-            test(board, move_order, visited, board_list, 0)
+            update_parent(board, move_order, visited, board_list, 0)
             board_list.pop(0)
         
         used += 1
@@ -234,7 +234,7 @@ def SMA_star(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER, l
 
     return None
 
-def test(board: Board, move_order: MoveOrder, visited: Sequence[str], board_list: SpecialList, board_index: int):
+def update_parent(board: Board, move_order: MoveOrder, visited: Sequence[str], board_list: SpecialList, board_index: int):
     successor = next_successor(board, move_order, visited, False)
 
     if successor != None:
@@ -252,7 +252,7 @@ def test(board: Board, move_order: MoveOrder, visited: Sequence[str], board_list
 
                 parent_index = board_list.find(parent)
 
-                test(parent, move_order, visited, board_list, parent_index)
+                update_parent(parent, move_order, visited, board_list, parent_index)
 
 
 def next_successor(board: Board, move_order: MoveOrder, visited: Sequence[str], visit=True):
