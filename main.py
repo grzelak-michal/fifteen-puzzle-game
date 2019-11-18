@@ -2,6 +2,7 @@ import sys, getopt
 import numpy as np
 from board import Board, MoveOrder
 import algorithms
+from algorithms import SpecialList
 import time
 import heuristics
 from copy import deepcopy
@@ -154,16 +155,16 @@ def heuristicFactory(text):
     else:
         return None
 
-programLauncher()
-# # board = readBoard()
-# arr = np.arange(16)
-# # np.random.shuffle(arr)
-# board = Board(arr.reshape(4, 4))
-# board.move('L')
-# board.move('L')
-# board.move('L')
-# board.move('U')
-# board.move('U')
+# programLauncher()
+# board = readBoard()
+arr = np.arange(16)
+# np.random.shuffle(arr)
+board = Board(arr.reshape(4, 4))
+board.move('L')
+board.move('L')
+board.move('L')
+board.move('U')
+board.move('U')
 # board.move('U')
 # board.move('R')
 # board.move('R')
@@ -173,22 +174,22 @@ programLauncher()
 # board.move('D')
 # board.move('L')
 # board.move('L')
-# board.move_history = []
-#
-# if board.is_solvable():
-#     print(board.board)
-#
-#     start = time.time()
-#
-#     solved = algorithms.A_star(board, MoveOrder(['R', 'L', 'D', 'U']), heuristics.h3)
-#
-#     end = time.time()
-#
-#     print("Found solution in {} moves, time: {}".format(len(solved.move_history), end - start))
-#     print(solved.move_history)
-#
-#     print(solved.board)
-#
-#     game = Game(solved, board.board)
-#     game.show()
+board.move_history = []
+
+if board.is_solvable():
+    print(board.board)
+
+    start = time.time()
+
+    solved = algorithms.SMA_star(board, heuristics.h3, MoveOrder(['R', 'L', 'D', 'U']))
+
+    end = time.time()
+
+    print("Found solution in {} moves, time: {}".format(len(solved.move_history), end - start))
+    print(solved.move_history)
+
+    print(solved.board)
+
+    game = Game(solved, board.board)
+    game.show()
 
