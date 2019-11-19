@@ -144,6 +144,42 @@ def A_star(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER) -> 
 
     return None
 
+def SMA_star(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER, limit: int = 100) -> Optional[Board]:
+    def smart_heuristic(board):
+        value = len(board.move_history) / 100 + heuristic(board)
+        return value
+
+    board_list = SortedKeyList(key=smart_heuristic)
+
+    board_list.add(board)
+    visited = dict()
+
+    while len(board_list) > 0:
+        considered_board = board_list.pop(0)
+        key = array_to_string(considered_board.board)
+
+        visited[key] = True
+
+        if considered_board.is_solved():
+            return considered_board
+
+        for direction in move_order:
+            if considered_board.is_move_possible(direction):
+                new_board = np.copy(considered_board.board)
+                new_history = considered_board.move_history[:]
+
+                new_board = Board(new_board, new_history)
+                new_board.move(direction)
+                new_key = array_to_string(new_board.board)
+
+                if visited.get(new_key, False) == False:
+                    if len(board_list) > limit:
+                        board_list = board_list[:limit]
+                        
+                    board_list.add(new_board)
+
+    return None
+
 class SpecialList(object):
     def __init__(self):
         self.sorted_list = list()
@@ -196,43 +232,6 @@ class SpecialList(object):
             return self.sorted_list[self.index]
         except IndexError:
             raise StopIteration
-
-def SMA_star(board: Board, heuristic: callable, move_order=DEFAULT_MOVE_ORDER, limit: int = 100) -> Optional[Board]:
-    def smart_heuristic(board):
-        value = len(board.move_history) / 100 + heuristic(board)
-        return value
-    
-    board_list = SpecialList()
-
-    board_list.add((heuristic(board), board, None))
-    visited = dict()
-    used = 1
-
-    while len(board_list) > 0:
-        board_score, considered_board, parent = board_list.get(0)
-
-        key = array_to_string(considered_board.board)
-        visited[key] = True
-
-        if considered_board.is_solved():
-            return considered_board
-
-        successor = next_successor(considered_board, move_order, visited)
-        successor_score = -1.0
-        if successor != None:
-                successor_score = max((board_score, smart_heuristic(successor)))
-        else:
-            update_parent(board, move_order, visited, board_list, 0)
-            board_list.pop(0)
-        
-        used += 1
-
-        if used > limit:
-            worst_board = board_list.pop(len(board_list) - 1)
-
-        board_list.add((successor_score, successor, board))
-
-    return None
 
 def update_parent(board: Board, move_order: MoveOrder, visited: Sequence[str], board_list: SpecialList, board_index: int):
     successor = next_successor(board, move_order, visited, False)
